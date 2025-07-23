@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>会議ゲーム：役職カード</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+    h1 {
+      margin-bottom: 1rem;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      width: 300px;
+      text-align: center;
+    }
+    .role {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    .sub-role {
+      font-size: 1.1rem;
+      color: #555;
+      margin-bottom: 1rem;
+    }
+    .explanation {
+      font-size: 0.9rem;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <h1>あなたの役職カード</h1>
+  <div class="card" id="cardArea">
+    <div class="role" id="roleName">読み込み中...</div>
+    <div class="sub-role" id="subCard">読み込み中...</div>
+    <div class="explanation" id="description"></div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const playerId = urlParams.get("id") || "player1";
+
+    const roleCards = {
+      player1: { role: "ファシリテーター", sub: "全肯定", desc: "常に相手の意見を肯定してください。" },
+      player2: { role: "タイムキーパー", sub: "全否定", desc: "常に相手の意見に反対し、論点を深めましょう。" },
+      player3: { role: "責任者", sub: "トリガー", desc: "話していない時間が続いたら、自分から発言してください。" },
+      player4: { role: "書記", sub: "空白", desc: "自由に振る舞ってください。" },
+    };
+
+    const card = roleCards[playerId];
+
+    if (card) {
+      document.getElementById("roleName").textContent = `役職：${card.role}`;
+      document.getElementById("subCard").textContent = `サブカード：${card.sub}`;
+      document.getElementById("description").textContent = card.desc;
+    } else {
+      document.getElementById("roleName").textContent = "不明なプレイヤーIDです。";
+      document.getElementById("subCard").textContent = "";
+      document.getElementById("description").textContent = "URLに ?id=player1 などを付けてアクセスしてください。";
+    }
+  </script>
+</body>
+</html>
