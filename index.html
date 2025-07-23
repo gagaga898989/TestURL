@@ -118,31 +118,34 @@
     }
 
     // タイマー設定
-    let totalSeconds = 60; // 1分
+    const totalSeconds = 300; // 5分
+    let remainingSeconds = totalSeconds;
     const timerElement = document.getElementById("timer");
     const helperElement = document.getElementById("helperText");
+
     const interval = setInterval(() => {
-      const minutes = Math.floor(totalSeconds / 60);
-      const seconds = totalSeconds % 60;
+      const minutes = Math.floor(remainingSeconds / 60);
+      const seconds = remainingSeconds % 60;
       timerElement.textContent = `タイマー: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
       
-      // 補助内容更新
+      // 割合で補助内容更新
+      const progressRatio = (totalSeconds - remainingSeconds) / totalSeconds;
       if (card) {
-        if (totalSeconds > 200) {
+        if (progressRatio < 0.33) {
           helperElement.textContent = helperHints[card.role][0];
-        } else if (totalSeconds > 100) {
+        } else if (progressRatio < 0.66) {
           helperElement.textContent = helperHints[card.role][1];
         } else {
           helperElement.textContent = helperHints[card.role][2];
         }
       }
 
-      if (totalSeconds <= 0) {
+      if (remainingSeconds <= 0) {
         clearInterval(interval);
         timerElement.textContent = "タイマー終了";
         helperElement.textContent = "会議終了: 次のステップへ移動してください。";
       }
-      totalSeconds--;
+      remainingSeconds--;
     }, 1000);
   </script>
 </body>
