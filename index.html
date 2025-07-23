@@ -23,6 +23,7 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       width: 300px;
       text-align: center;
+      margin-bottom: 1rem;
     }
     .role {
       font-size: 1.3rem;
@@ -38,6 +39,25 @@
       font-size: 0.9rem;
       color: #888;
     }
+    .timer {
+      font-size: 1.5rem;
+      margin-top: 1rem;
+      background: #e0f7fa;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 1px solid #00acc1;
+    }
+    .helper {
+      margin-top: 1rem;
+      font-size: 1rem;
+      color: #444;
+      text-align: center;
+      background: #fff3e0;
+      border: 1px solid #ffb74d;
+      padding: 0.8rem;
+      border-radius: 8px;
+      width: 80%;
+    }
   </style>
 </head>
 <body>
@@ -48,6 +68,9 @@
     <div class="explanation" id="description"></div>
   </div>
 
+  <div class="timer" id="timer">タイマー: 05:00</div>
+  <div class="helper" id="helperText">補助内容を表示中...</div>
+
   <script>
     const urlParams = new URLSearchParams(window.location.search);
     const playerId = urlParams.get("id") || "player1";
@@ -57,6 +80,29 @@
       player2: { role: "タイムキーパー", sub: "全否定", desc: "常に相手の意見に反対し、論点を深めましょう。" },
       player3: { role: "責任者", sub: "トリガー", desc: "話していない時間が続いたら、自分から発言してください。" },
       player4: { role: "書記", sub: "空白", desc: "自由に振る舞ってください。" },
+    };
+
+    const helperHints = {
+      "ファシリテーター": [
+        "序盤: 会議の議題を皆に伝えましょう。",
+        "中盤: 各参加者の意見を引き出しましょう。",
+        "終盤: 会議をまとめ始めてください。"
+      ],
+      "タイムキーパー": [
+        "序盤: 残り時間を意識させましょう。",
+        "中盤: ペース配分を管理しましょう。",
+        "終盤: 終了時間を伝えて締めに誘導しましょう。"
+      ],
+      "責任者": [
+        "序盤: 会議の目的を明確にしましょう。",
+        "中盤: 意見の収束を意識しましょう。",
+        "終盤: 結論を出す手助けをしましょう。"
+      ],
+      "書記": [
+        "序盤: 主要な議題を記録しましょう。",
+        "中盤: 意見の対立点も記録しましょう。",
+        "終盤: 結論や次のステップをまとめましょう。"
+      ]
     };
 
     const card = roleCards[playerId];
@@ -70,6 +116,34 @@
       document.getElementById("subCard").textContent = "";
       document.getElementById("description").textContent = "URLに ?id=player1 などを付けてアクセスしてください。";
     }
+
+    // タイマー設定
+    let totalSeconds = 300; // 5分
+    const timerElement = document.getElementById("timer");
+    const helperElement = document.getElementById("helperText");
+    const interval = setInterval(() => {
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      timerElement.textContent = `タイマー: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      
+      // 補助内容更新
+      if (card) {
+        if (totalSeconds > 200) {
+          helperElement.textContent = helperHints[card.role][0];
+        } else if (totalSeconds > 100) {
+          helperElement.textContent = helperHints[card.role][1];
+        } else {
+          helperElement.textContent = helperHints[card.role][2];
+        }
+      }
+
+      if (totalSeconds <= 0) {
+        clearInterval(interval);
+        timerElement.textContent = "タイマー終了";
+        helperElement.textContent = "会議終了: 次のステップへ移動してください。";
+      }
+      totalSeconds--;
+    }, 1000);
   </script>
 </body>
 </html>
